@@ -1,0 +1,16 @@
+[
+  {
+    "operation": "add",
+    "valueA": 2,
+    "valueB": 3,
+    "result": 5,
+    "date": "2024-11-06T09:21:01.319Z"
+  },
+  {
+    "operation": "multiply",
+    "valueA": 4,
+    "valueB": 5,
+    "result": 20,
+    "date": "2024-11-06T09:21:53.124Z"
+  }
+]
