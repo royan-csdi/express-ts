@@ -1,13 +1,20 @@
-import { Router, Request, Response } from "express";
+import { Router, Request, Response, NextFunction } from "express";
 import { formatResponse } from "../utils";
 import mathRouter from "./math.routes";
 import authRouter from "./auth.routes";
+import promoRouter from "./promo.routes";
+import articleRouter from "./article.routes";
+import tagRouter from "./tag.routes";
+import carRouter from "./car.routes";
+import blogRouter from "./blog.routes";
+import iklanRouter from "./iklan.routes";
 import {
   checkAuth,
   checkHeader,
   errorHandler,
   loggingMiddleware,
 } from "../middlewares";
+import loggerWinston from "../config/winston.config";
 
 const router = Router();
 
@@ -143,6 +150,25 @@ router.get("/books/:id", (req: Request, res: Response) => {
 
 router.use("/math", mathRouter);
 router.use("/", authRouter);
+router.use("/promos", promoRouter);
+router.use("/articles", articleRouter);
+router.use("/tags", tagRouter);
+router.use((req: Request, res: Response, next: NextFunction) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    loggerWinston.info(
+      `${req.method} ${req.originalUrl} - ${duration}ms - Winston`
+    );
+  });
+  next();
+});
+router.use("/cars", carRouter);
+router.use("/blogs", blogRouter);
+router.use("/iklans", iklanRouter);
+router.get("/try-error", (req: Request, res: Response) => {
+  throw new Error("error coba");
+});
 router.use(errorHandler);
 
 export default router;

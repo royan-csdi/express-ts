@@ -2,6 +2,7 @@ import { RequestHandler, Request, Response, NextFunction } from "express";
 import { formatResponse } from "../utils";
 import env from "../config/env.config";
 import { verifyToken } from "../utils/jwt";
+import loggerWinston from "../config/winston.config";
 
 const checkHeader: RequestHandler = (req, res, next) => {
   const contentType = req.headers["content-type"];
@@ -63,6 +64,7 @@ const errorHandler = (
 ) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
+  loggerWinston.error(`${statusCode} - ${message} - Winston`);
   res.status(statusCode).json(formatResponse(statusCode, message, null));
 };
 

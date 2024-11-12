@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Promo {
+  id          String      @id @default(uuid())
+  title       String
+  articles    Article[] @relation("PromoArticles")
+}
+
+model Article {
+  id          String     @id @default(uuid())
+  title       String
+  content     String
+  promoId     String
+  promo       Promo     @relation("PromoArticles", fields: [promoId], references: [id])
+  articleTags ArticleTag[]
+}
+
+model Tag {
+  id       String       @id @default(uuid())
+  name     String
+  articleTags ArticleTag[] @relation("TagsOnArticles")
+}
+
+model ArticleTag {
+  articleId String 
+  article Article @relation(fields: [articleId], references: [id]) 
+  tagId String 
+  tag Tag @relation("TagsOnArticles",fields: [tagId], references: [id]) 
+  
+  @@id([articleId, tagId])
+}
+
+model Iklan{
+  id        String    @id @default(uuid())
+  name      String    
+  content   String
+  discount  Float
+  image     String
+  cars      Car[]    @relation("IklanCars")
+}
+
+model Car {
+  id        String    @id @default(uuid())
+  image     String
+  name      String
+  model     String
+  variant   String
+  price     Float
+  isNew     Boolean
+  iklanId   String
+  iklan     Iklan     @relation("IklanCars",fields: [iklanId], references: [id])
+  carBlogs  CarBlog[]
+
+  @@index([name, model, variant])
+}
+
+model Blog {
+  id        String    @id @default(uuid())
+  title     String    
+  desc      String
+  content   String
+  image     String
+  carBlogs   CarBlog[] @relation("BlogsOnCars")
+}
+
+model CarBlog {
+  blogId    String
+  blog      Blog    @relation("BlogsOnCars", fields: [blogId], references: [id])
+  carId     String
+  car       Car     @relation(fields: [carId], references: [id])
+
+  @@id([blogId, carId])
+}
